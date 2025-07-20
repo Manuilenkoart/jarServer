@@ -9,13 +9,13 @@ const port = 3000;
 app.use(cors());
 
 app.get("/status", (req, res) => {
-  res.send("ok");
+  res.status(200).send("ok");
 });
 
 app.get("/", (req, res) => {
   if (req.host !== process.env.ALLOW_HOST) {
     console.error("access denied", req.host);
-    return res.status(403);
+    return res.status(403).send({ message: "Access denied" });
   }
 
   const { clientId = "" } = req.query ?? {};
