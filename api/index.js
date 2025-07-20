@@ -14,7 +14,7 @@ app.use((req, res, next) => {
   }
 
   if (origin !== process.env.ALLOW_HOST) {
-    return res.status(403).send({ error: "Blocked: Origin not allowed" });
+    return res.status(403).send({ error: `Blocked: ${origin} not allowed` });
   }
 
   cors({
