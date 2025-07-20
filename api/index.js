@@ -6,18 +6,28 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (!origin) {
+    return res.status(403).send({ error: "Blocked: No Origin header" });
+  }
+
+  if (origin !== process.env.ALLOW_HOST) {
+    return res.status(403).send({ error: "Blocked: Origin not allowed" });
+  }
+
+  cors({
+    origin: process.env.ALLOW_HOST,
+    optionsSuccessStatus: 200,
+  })(req, res, next);
+});
 
 app.get("/status", (req, res) => {
   res.status(200).send("ok");
 });
 
 app.get("/", (req, res) => {
-  if (req.host !== process.env.ALLOW_HOST) {
-    console.error("access denied", req.host);
-    return res.status(403).send({ message: "Access denied" });
-  }
-
   const { clientId = "" } = req.query ?? {};
 
   if (!clientId) {
